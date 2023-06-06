@@ -3,19 +3,56 @@ package org.gha.junit5app.ejemplos.models;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.Properties;
 
 import org.gha.junit5app.ejemplos.exceptions.DineroInsuficienteException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnJre;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.JRE;
+import org.junit.jupiter.api.condition.OS;
 
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CuentaTest {
 
+	Cuenta cuenta;
+
+	@BeforeEach
+	void initMetodoTest() {
+		this.cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
+		System.out.println("Inicializando el metodo de prueba.");
+	}
+
+	@AfterEach
+	void tearDown() {
+		System.out.println("finalizando el metodo de prueba.");
+	}
+
+	@BeforeAll
+	static void beforeAll() {
+		System.out.println("inicializando el test");
+	}
+
+	@AfterAll
+	static void afterAll() {
+		System.out.println("finalizando el test");
+	}
+
 	@Test
+	@DisplayName("el nombre!")
 	void testNombreCuenta() {
 
-		Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
 		String esperado = "Andres";
 		String real = cuenta.getPersona();
 
@@ -29,7 +66,7 @@ class CuentaTest {
 	@Test
 	@DisplayName("el saldo, que no sea null, mayor que cero, valor esperado.")
 	void testSaldoCuenta() {
-		Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
+
 		assertNotNull(cuenta.getSaldo());
 		assertEquals(1000.12345, cuenta.getSaldo().doubleValue());
 		assertFalse(cuenta.getSaldo().compareTo(BigDecimal.ZERO) < 0);
@@ -49,7 +86,7 @@ class CuentaTest {
 
 	@Test
 	void testDebitoCuenta() {
-		Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
+
 		cuenta.debito(new BigDecimal(100));
 		assertNotNull(cuenta.getSaldo());
 		assertEquals(900, cuenta.getSaldo().intValue());
@@ -58,7 +95,7 @@ class CuentaTest {
 
 	@Test
 	void testCreditoCuenta() {
-		Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
+
 		cuenta.credito(new BigDecimal(100));
 		assertNotNull(cuenta.getSaldo());
 		assertEquals(1100, cuenta.getSaldo().intValue());
@@ -67,7 +104,7 @@ class CuentaTest {
 
 	@Test
 	void testDineroInsuficienteExceptionCuenta() {
-		Cuenta cuenta = new Cuenta("Andres", new BigDecimal("1000.12345"));
+
 		Exception exception = assertThrows(DineroInsuficienteException.class, () -> {
 			cuenta.debito(new BigDecimal(1500));
 		});
@@ -122,4 +159,53 @@ class CuentaTest {
 				() -> assertTrue(banco.getCuentas().stream().anyMatch(c -> c.getPersona().equals("Jhon Doe"))));
 	}
 
+	@Test
+	@EnabledOnOs(OS.WINDOWS)
+	void testSoloWindows() {
+	}
+
+	@Test
+	@EnabledOnOs({ OS.LINUX, OS.MAC })
+	void testSoloLinuxMac() {
+	}
+
+	@Test
+	@DisabledOnOs(OS.WINDOWS)
+	void testNoWindows() {
+	}
+	
+	@Test
+    @EnabledOnJre(JRE.JAVA_8)
+    void soloJdk8() {
+    }
+
+	@Test
+    @EnabledOnJre(JRE.JAVA_9)
+    void soloJdk9() {
+    }
+	
+	
+    @Test
+    @EnabledOnJre(JRE.JAVA_15)
+    void soloJDK15() {
+    }
+
+    @Test
+    @EnabledOnJre(JRE.OTHER)
+    void soloJDKOTHER() {
+    }
+    
+    
+    @Test
+    @DisabledOnJre(JRE.JAVA_15)
+    void testNoJDK15() {
+    }
+
+    @Test
+    void imprimirSystemProperties() {
+        Properties properties = System.getProperties();
+        properties.forEach((k, v)-> System.out.println(k + ":" + v));
+    }
+    
+    
 }
