@@ -3,6 +3,7 @@ package org.gha.junit5app.ejemplos.models;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.Properties;
 
 import org.gha.junit5app.ejemplos.exceptions.DineroInsuficienteException;
@@ -206,6 +207,18 @@ class CuentaTest {
         Properties properties = System.getProperties();
         properties.forEach((k, v)-> System.out.println(k + ":" + v));
     }
+    
+    
+    @Test
+    void imprimirVariablesAmbiente() {
+    	System.out.println( "----------------------------------------------");
+        Map<String, String> getenv = System.getenv();
+        getenv.forEach((k, v)-> System.out.println(k + " = " + v));
+    }
+    
+    
+    
+    
     
     
 }
